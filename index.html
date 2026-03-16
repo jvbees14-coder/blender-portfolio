@@ -1,3 +1,4 @@
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -241,7 +242,6 @@
   <main>
     <section class="grid" id="gallery">
 
-      <!--Donuts-->
       <div class="card">
         <img src="images/Fancy Donut_lowres.png"
              data-full="images/Fancy Donut.png"
@@ -609,7 +609,6 @@
     </section>
   </main>
     
-  <!-- LIGHTBOX -->
   <div class="lightbox" id="lightbox">
     <button class="lightbox-close" aria-label="Close">✕</button>
     <div class="lightbox-inner"></div>
@@ -675,5 +674,142 @@
   </footer>
 
 
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<!The code needs a more mechanised eye>
+<head>
+  <!Human vs Blender: Blender wins>
+<meta charset="UTF-8">
+<title>Happy Birthday Nate</title>
+
+<style>
+
+body{
+    background-image: url('Images/background.png');
+    color:#00ff9c;
+    font-family:monospace;
+    display:flex;
+    height:100vh;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    transition: color 0.8s ease;
+}
+
+body.error{
+    color:#ff3b3b;
+}
+
+input{
+    background:#111;
+    border:1px solid currentColor;
+    color:currentColor;
+    padding:10px;
+    font-size:16px;
+}
+
+button{
+    margin-top:10px;
+    padding:10px 15px;
+    background:transparent;
+    border:1px solid currentColor;
+    color:currentColor;
+    cursor:pointer;
+    font-family:monospace;
+    transition:background 0.2s, color 0.2s;
+}
+
+button:hover{
+    background:currentColor;
+}
+
+#output{
+    margin-top:40px;
+    font-size:28px;
+    letter-spacing:3px;
+}
+  
+#status{
+    opacity:0;
+    transition:opacity 2.5s;
+    text-align: center;
+    max-width: 480px;
+}
+
+</style>
+</head>
+
+<body>
+<!You're gonna need a special composition to solve this>
+<h2>Enter Password</h2>
+
+<input type="password" id="password">
+<button onclick="checkPassword()">Unlock</button>
+
+<div id="output"></div>
+  
+<p id="status">Did you think it would be that easy? To prevent unwanted usage I took the liberty of encrypting for you. You're welcome...The key to unlocking your gift is hidden on this page: (remember, it's crunch time!)<br>If you do need help, there are some in the code, have fun!</p>
+
+<script>
+
+const correctPassword = "opensesame";
+const secret = "228MP-1YLL9-SKCH6";
+
+function checkPassword(){
+
+    const input = document.getElementById("password").value.toLowerCase();
+
+    if(input !== correctPassword){
+        flashError();
+        return;
+    }
+
+    revealText(secret);
+}
+
+function flashError(){
+
+    const body = document.body;
+
+    body.classList.add("error");
+
+    setTimeout(()=>{
+        body.classList.remove("error");
+    },1000);
+
+}
+
+function revealText(text){
+
+    const output = document.getElementById("output");
+    output.innerHTML = "";
+
+    let letters = text.split("");
+    let revealed = new Array(letters.length).fill(false);
+
+    letters.forEach((letter, index)=>{
+
+        let delay = Math.random()*2000;
+
+        setTimeout(()=>{
+            revealed[index] = true;
+            render();
+        }, delay);
+
+    });
+  let delay = 5000;
+  document.getElementById("status").style.opacity = "1";
+
+    function render(){
+        output.innerHTML = letters.map((l,i)=>revealed[i] ? l : "_").join("");
+    }
+}
+
+</script>
+<!One of my favourite nodes is the color ramp, but I find it difficult to be very precise sometimes: Typing your small numbers can help>
 </body>
 </html>
