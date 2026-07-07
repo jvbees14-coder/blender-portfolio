@@ -1205,6 +1205,26 @@
         amb.alt = '';
       }
       lightboxAmbient.appendChild(amb);
+      return amb;
+    }
+
+    // Slave the ambient copy to the main video so the glow stays in step
+    // through pause, seek, rate changes, and loop wrap-around.
+    function syncAmbient(media, amb) {
+      amb.autoplay = false;
+      amb.loop = false;
+      amb.pause();
+      const matchTime = () => { amb.currentTime = media.currentTime; };
+      media.addEventListener('play', () => { matchTime(); amb.play().catch(() => {}); });
+      media.addEventListener('pause', () => { amb.pause(); matchTime(); });
+      media.addEventListener('seeking', matchTime);
+      media.addEventListener('ratechange', () => { amb.playbackRate = media.playbackRate; });
+      media.addEventListener('timeupdate', () => {
+        if (Math.abs(amb.currentTime - media.currentTime) > 0.3) {
+          matchTime();
+          if (!media.paused && amb.paused) amb.play().catch(() => {});
+        }
+      });
     }
 
     function preloadNeighbours(index) {
@@ -1234,7 +1254,10 @@
         media.alt = item.dataset.title;
       }
       lightboxMedia.appendChild(media);
-      setAmbient(item);
+      const amb = setAmbient(item);
+      if (amb && amb.tagName === 'VIDEO' && media.tagName === 'VIDEO') {
+        syncAmbient(media, amb);
+      }
 
       lightboxCaption.innerHTML = '';
       const h3 = document.createElement('h3');
