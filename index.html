@@ -288,7 +288,9 @@
     }
 
     .work {
-      /* width proportional to aspect ratio -> equal heights per row, no cropping */
+      /* width proportional to --ar -> equal heights per row; a --ar that
+         differs from the media's natural ratio deliberately crops it to
+         vary sizes within a row (lightbox always shows the full frame) */
       flex: var(--ar) 1 0%;
       position: relative;
       margin: 0;
@@ -385,14 +387,12 @@
     .work:hover figcaption::before,
     .work:focus-visible figcaption::before { transform: scaleX(1); }
 
-    /* Full-bleed feature rows: break the container for a chapter beat */
-    .row.bleed {
-      margin-inline: calc(50% - 50vw);
+    /* Feature rows: extra vertical space for a chapter beat, still contained */
+    .row.feature {
       margin-block: clamp(1.2rem, 4vw, 3rem);
     }
 
-    .row.bleed .work { border-radius: 0; }
-    .gallery .row.bleed:first-child { margin-top: 0; }
+    .gallery .row.feature:first-child { margin-top: 0; }
 
     /* LoD: soften the low-res placeholder until the mid-res tier arrives */
     .work img.lod {
@@ -754,7 +754,7 @@
   <main class="gallery" id="gallery">
 
     <!-- Feature: ultrawide cinematic band -->
-    <div class="row bleed">
+    <div class="row feature">
       <figure class="work" style="--ar: 2.3704" tabindex="0"
               data-full="images/Whole Car.png" data-type="img"
               data-title="Car Rendering" data-desc="Modelling · Lighting">
@@ -765,13 +765,13 @@
     </div>
 
     <div class="row">
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 2.1" tabindex="0"
               data-full="videos/Fireball.mp4" data-type="video"
               data-title="Fireball Animation" data-desc="Fluid Sim · Shading">
         <video src="videos/Fireball_lowres.mp4" data-mid="videos/Fireball_mid.mp4" muted loop playsinline preload="metadata"></video>
         <figcaption><h3>Fireball Animation</h3><p>Fluid Sim · Shading</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.3" tabindex="0"
               data-full="images/Fancy Donut.png" data-type="img"
               data-title="Fancy Donuts" data-desc="Modelling · Geometry Nodes">
         <img src="images/Fancy Donut_lowres.png" data-mid="images/Fancy Donut_mid.jpg" class="lod" width="1600" height="900"
@@ -805,14 +805,14 @@
     </div>
 
     <div class="row">
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.3" tabindex="0"
               data-full="images/Paint.png" data-type="img"
               data-title="Car Paint" data-desc="Modelling · Compositing">
         <img src="images/Paint_lowres.png" data-mid="images/Paint_mid.jpg" class="lod" width="1600" height="900"
              alt="Car paint material study" loading="lazy" decoding="async" />
         <figcaption><h3>Car Paint</h3><p>Modelling · Compositing</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 2.1" tabindex="0"
               data-full="images/Tires.png" data-type="img"
               data-title="Car Tyres" data-desc="Modelling · Compositing">
         <img src="images/Tires_lowres.png" data-mid="images/Tires_mid.jpg" class="lod" width="1600" height="900"
@@ -844,24 +844,28 @@
     </div>
 
     <div class="row">
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.9" tabindex="0"
               data-full="images/Purple.png" data-type="img"
               data-title="Block Magic" data-desc="Geometry Nodes · Shading">
         <img src="images/Purple_lowres.png" data-mid="images/Purple_mid.jpg" class="lod" width="1600" height="900"
              alt="Purple abstract block render" loading="lazy" decoding="async" />
         <figcaption><h3>Block Magic</h3><p>Geometry Nodes · Shading</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
-              data-full="videos/Blue Blocks.mp4" data-type="video"
-              data-title="Blue Blocks" data-desc="Geometry Nodes · Shading">
-        <video src="videos/Blue Blocks_lowres.mp4" data-mid="videos/Blue Blocks_mid.mp4" muted loop playsinline preload="metadata"></video>
-        <figcaption><h3>Blue Blocks</h3><p>Geometry Nodes · Shading</p></figcaption>
-      </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.3" tabindex="0"
               data-full="videos/Hexagon Stack.mp4" data-type="video"
               data-title="Hexagon Stacks" data-desc="Geometry Nodes · Shading">
         <video src="videos/Hexagon Stack_lowres.mp4" data-mid="videos/Hexagon Stack_mid.mp4" muted loop playsinline preload="metadata"></video>
         <figcaption><h3>Hexagon Stacks</h3><p>Geometry Nodes · Shading</p></figcaption>
+      </figure>
+    </div>
+
+    <!-- Feature: solo cinematic band -->
+    <div class="row feature">
+      <figure class="work" style="--ar: 2.35" tabindex="0"
+              data-full="videos/Blue Blocks.mp4" data-type="video"
+              data-title="Blue Blocks" data-desc="Geometry Nodes · Shading">
+        <video src="videos/Blue Blocks_lowres.mp4" data-mid="videos/Blue Blocks_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Blue Blocks</h3><p>Geometry Nodes · Shading</p></figcaption>
       </figure>
     </div>
 
@@ -889,14 +893,14 @@
     </div>
 
     <div class="row">
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 2.1" tabindex="0"
               data-full="images/Modelling.png" data-type="img"
               data-title="Dungeon" data-desc="Modelling · Lighting">
         <img src="images/Modelling_lowres.png" data-mid="images/Modelling_mid.jpg" class="lod" width="1600" height="900"
              alt="Dungeon environment render" loading="lazy" decoding="async" />
         <figcaption><h3>Dungeon</h3><p>Modelling · Lighting</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.3" tabindex="0"
               data-full="images/fire_beauty_v01.png" data-type="img"
               data-title="Fire Simulation" data-desc="Fluid Sim · Shading">
         <img src="images/fire_beauty_v01_lowres.png" data-mid="images/fire_beauty_v01_mid.jpg" class="lod" width="1600" height="900"
@@ -906,19 +910,19 @@
     </div>
 
     <div class="row">
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.35" tabindex="0"
               data-full="videos/Rigidbody1.mp4" data-type="video"
               data-title="Rigidbody Sim" data-desc="Simulation · Rendering">
         <video src="videos/Rigidbody1_lowres.mp4" data-mid="videos/Rigidbody1_mid.mp4" muted loop playsinline preload="metadata"></video>
         <figcaption><h3>Rigidbody Sim</h3><p>Simulation · Rendering</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.3" tabindex="0"
               data-full="videos/Sea.mp4" data-type="video"
               data-title="Sea Blocks" data-desc="Geometry Nodes · Shading">
         <video src="videos/Sea_lowres.mp4" data-mid="videos/Sea_mid.mp4" muted loop playsinline preload="metadata"></video>
         <figcaption><h3>Sea Blocks</h3><p>Geometry Nodes · Shading</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 2.0" tabindex="0"
               data-full="images/Title.png" data-type="img"
               data-title="Title Image" data-desc="Geometry Nodes · Shading">
         <img src="images/Title_lowres.png" data-mid="images/Title_mid.jpg" class="lod" width="1600" height="900"
@@ -927,14 +931,14 @@
       </figure>
     </div>
 
-    <div class="row bleed">
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+    <div class="row">
+      <figure class="work" style="--ar: 1.9" tabindex="0"
               data-full="videos/Lyric Visualiser.mp4" data-type="video"
               data-title="Lyric Visualiser" data-desc="Simulation · Rendering">
         <video src="videos/Lyric Visualiser_lowres.mp4" data-mid="videos/Lyric Visualiser_mid.mp4" muted loop playsinline preload="metadata"></video>
         <figcaption><h3>Lyric Visualiser</h3><p>Simulation · Rendering</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.3" tabindex="0"
               data-full="videos/Motion Tracking.mp4" data-type="video"
               data-title="Motion Tracking" data-desc="VFX · Modelling">
         <video src="videos/Motion Tracking_lowres.mp4" data-mid="videos/Motion Tracking_mid.mp4" muted loop playsinline preload="metadata"></video>
@@ -943,21 +947,21 @@
     </div>
 
     <div class="row">
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.3" tabindex="0"
               data-full="images/Blocky Donuts.png" data-type="img"
               data-title="Blocky Donuts" data-desc="Modelling · Geometry Nodes">
         <img src="images/Blocky Donuts_lowres.png" data-mid="images/Blocky Donuts_mid.jpg" class="lod" width="1600" height="900"
              alt="Voxel-style donut render" loading="lazy" decoding="async" />
         <figcaption><h3>Blocky Donuts</h3><p>Modelling · Geometry Nodes</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.9" tabindex="0"
               data-full="images/Original Donut.png" data-type="img"
               data-title="Original Donuts" data-desc="Modelling · Geometry Nodes">
         <img src="images/Original Donut_lowres.png" data-mid="images/Original Donut_mid.jpg" class="lod" width="1600" height="900"
              alt="Classic Blender donut render" loading="lazy" decoding="async" />
         <figcaption><h3>Original Donuts</h3><p>Modelling · Geometry Nodes</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.3" tabindex="0"
               data-full="images/Turquoise.png" data-type="img"
               data-title="Turquoise" data-desc="Shading · Lighting">
         <img src="images/Turquoise_lowres.png" data-mid="images/Turquoise_mid.jpg" class="lod" width="1600" height="900"
@@ -967,13 +971,13 @@
     </div>
 
     <div class="row">
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 2.0" tabindex="0"
               data-full="videos/TitleV2.mp4" data-type="video"
               data-title="Title Animation" data-desc="Geometry Nodes · Shading">
         <video src="videos/TitleV2_lowres.mp4" data-mid="videos/TitleV2_mid.mp4" muted loop playsinline preload="metadata"></video>
         <figcaption><h3>Title Animation</h3><p>Geometry Nodes · Shading</p></figcaption>
       </figure>
-      <figure class="work" style="--ar: 1.7778" tabindex="0"
+      <figure class="work" style="--ar: 1.3" tabindex="0"
               data-full="videos/Multiple Waveforms.mp4" data-type="video"
               data-title="Multiple Waveforms" data-desc="Modelling · Animation">
         <video src="videos/Multiple Waveforms_lowres.mp4" data-mid="videos/Multiple Waveforms_mid.mp4" muted loop playsinline preload="metadata"></video>
