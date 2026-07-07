@@ -3,675 +3,958 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jonathan Beesley's Portfolio</title>
+  <title>Jonathan Beesley — 3D Artist</title>
+  <meta name="description" content="3D renders and animations created in Blender — modelling, shading, lighting, simulation, geometry nodes, and compositing." />
+  <meta property="og:title" content="Jonathan Beesley — 3D Artist" />
+  <meta property="og:description" content="3D renders and animations created in Blender." />
+  <meta property="og:image" content="images/Whole Car.png" />
   <link rel="icon" type="image/png" href="favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg: #0e0e11;
-      --fg: #f2f2f7;
-      --muted: #9a9aa3;
-      --accent: #7c7cff;
-      --card: #17171c;
+      --bg: #0d0d0f;
+      --surface: #131316;
+      --fg: #f5f5f7;
+      --muted: #8b8b93;
+      --accent: #8e93c4;
+      --hairline: rgba(255, 255, 255, 0.08);
+      --gap: clamp(8px, 1vw, 14px);
+      --pad-x: clamp(1rem, 4vw, 3.5rem);
+      --radius: 12px;
+      --ease-out: cubic-bezier(0.16, 0.84, 0.28, 1);
     }
 
     * { box-sizing: border-box; }
 
+    html { scroll-behavior: smooth; }
+    html.lightbox-open { overflow: hidden; }
+
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
+      color: var(--fg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    ::selection { background: rgba(142, 147, 196, 0.35); }
+
+    a { color: var(--accent); text-decoration: none; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* ---------- NAV ---------- */
+
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem var(--pad-x);
+      transition: background 0.45s ease, border-color 0.45s ease, padding 0.45s ease;
+      border-bottom: 1px solid transparent;
+    }
+
+    .nav.scrolled {
+      background: rgba(13, 13, 15, 0.55);
+      -webkit-backdrop-filter: blur(20px) saturate(1.5);
+      backdrop-filter: blur(20px) saturate(1.5);
+      border-bottom-color: var(--hairline);
+      padding-top: 0.8rem;
+      padding-bottom: 0.8rem;
+    }
+
+    .nav .brand {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
       color: var(--fg);
     }
 
-    header {
-      padding: 4rem 2rem 3rem;
-      text-align: center;
-    }
-
-    header h1 {
-      font-size: clamp(2.2rem, 5vw, 3.2rem);
-      margin: 0 0 1rem;
-    }
-
-    header p {
-      max-width: 700px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 1.1rem;
-    }
-
-    main {
-      padding: 2rem;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-      position: relative;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.45),
-      0 0 30px rgba(124, 124, 255, 0.25);
-    }
-
-    .card img,
-    .card video {
-      aspect-ratio: 16/9;
-      width: 100%;
-      display: block;
-      object-fit: cover;
-    }
-
-    .card video {
-      background: black;
-    }
-
-    .card .info {
-      padding: 1rem 1.2rem;
-    }
-
-    .card .info h3 {
-      margin: 0 0 0.4rem;
-      font-size: 1.05rem;
-    }
-
-    .card .info p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    footer {
-      text-align: center;
-      padding: 3rem 2rem;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    a {
-      color: #5ea1ff;
-      text-decoration: none;
-      transition: color 0.4s ease;
-    }
-
-    a:hover {
-      text-decoration: underline;
-      color: #8ab8ff;
-    }
-      
-    .break {
-        grid-column: 1 / -1;
-    }
-      
-    .card {
-        cursor: pointer;
-    }
-      
-    /* LIGHTBOX */
-    .lightbox {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.85);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-    }
-
-
-    .lightbox.active {
-        display: flex;
-    }
-
-
-    .lightbox img,
-    .lightbox video {
-        max-width: 90vw;
-        max-height: 90vh;
-        border-radius: 12px;
-    }
-
-
-    .lightbox::after {
-        position: absolute;
-        top: 2rem;
-        right: 2.5rem;
-        font-size: 2rem;
-        color: #ffffff;
-        cursor: pointer;
-        opacity: 0.7;
-    }
-
-
-    .lightbox:hover::after {
-        opacity: 1;
-    }
-    
-    .lightbox-content {
-      position: relative;
-      max-width: 90vw;
-      max-height: 90vh;
-    }
-
-    .lightbox-info {
-      position: absolute;
-      top: 1.2rem;
-      left: 1.2rem;
-      right: 1.2rem;
-      padding: 0.9rem 1.2rem;
-      background: rgba(20, 20, 28, 0.6);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
-      color: #f2f2f7;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-
-    .lightbox-info h3 {
-      margin: 0 0 0.2rem;
-      font-size: 1.05rem;
-    }
-
-    .lightbox-info p {
-      margin: 0;
-      color: #b5b5c0;
+    .nav .contact-link {
       font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.3s ease;
     }
-    
-    .lightbox-close {
+
+    .nav .contact-link:hover { color: var(--fg); }
+
+    /* ---------- HERO ---------- */
+
+    .hero {
+      position: relative;
+      height: 100svh;
+      min-height: 560px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero video {
       position: absolute;
-      top: 1.5rem;
-      right: 2rem;
-      background: rgba(0, 0, 0, 0.5);
-      border: none;
-      color: white;
-      font-size: 1.8rem;
-      padding: 0.3rem 0.6rem;
-      border-radius: 8px;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5) saturate(0.9);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at center, transparent 0%, rgba(13, 13, 15, 0.45) 100%),
+        linear-gradient(180deg, rgba(13, 13, 15, 0.3) 0%, rgba(13, 13, 15, 0.1) 45%, var(--bg) 100%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 var(--pad-x);
+      will-change: transform, opacity;
+    }
+
+    .hero .eyebrow {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.4rem;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 8.5vw, 6rem);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.02;
+    }
+
+    .hero .tagline {
+      margin: 1.5rem auto 0;
+      max-width: 34em;
+      font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+      font-weight: 400;
+      line-height: 1.6;
+      color: rgba(245, 245, 247, 0.72);
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 2.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      width: 1px;
+      height: 52px;
+      overflow: hidden;
+    }
+
+    .scroll-cue::before {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(245, 245, 247, 0.7));
+      animation: cueDrop 2.2s var(--ease-out) infinite;
+    }
+
+    @keyframes cueDrop {
+      0% { transform: translateY(-100%); }
+      55% { transform: translateY(0); }
+      100% { transform: translateY(100%); }
+    }
+
+    /* ---------- SECTION INTRO ---------- */
+
+    .section-intro {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: clamp(4rem, 9vw, 8rem) var(--pad-x) clamp(2.2rem, 4vw, 3.5rem);
+    }
+
+    .section-intro .eyebrow {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.9rem;
+    }
+
+    .section-intro h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    /* ---------- GALLERY ---------- */
+
+    .gallery {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 0 var(--pad-x);
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+    }
+
+    .row {
+      display: flex;
+      gap: var(--gap);
+    }
+
+    .work {
+      /* width proportional to aspect ratio -> equal heights per row, no cropping */
+      flex: var(--ar) 1 0%;
+      position: relative;
+      margin: 0;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.7);
       cursor: pointer;
-      z-index: 10;
-      transition: background 0.2s ease, opacity 0.2s ease;
     }
 
-    .lightbox-close:hover {
-      background: rgba(0, 0, 0, 0.8);
+    .work img,
+    .work video {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: var(--ar);
+      object-fit: cover;
+      filter: brightness(0.96);
+      transition:
+        transform 0.9s var(--ease-out) 0.06s,
+        filter 0.9s var(--ease-out) 0.06s;
     }
 
-      
-    .lightbox-info {
+    .work:hover img,
+    .work:hover video {
+      transform: scale(1.035);
+      filter: brightness(1.06);
+    }
+
+    .work figcaption {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 2.4rem 1.3rem 1.1rem;
+      background: linear-gradient(to top, rgba(10, 10, 13, 0.82), rgba(10, 10, 13, 0.35) 55%, transparent);
       opacity: 0;
-      transform: translateY(-10px);
-      backdrop-filter: blur(0px);
-      animation: infoFadeIn 0.35s ease-out 0.35s forwards;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease 0.08s, transform 0.5s var(--ease-out) 0.08s;
+      pointer-events: none;
     }
 
-    @keyframes infoFadeIn {
-      to {
+    .work:hover figcaption,
+    .work:focus-visible figcaption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .work figcaption h3 {
+      margin: 0 0 0.15rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .work figcaption p {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: rgba(245, 245, 247, 0.65);
+    }
+
+    /* LoD: soften the low-res placeholder until the mid-res tier arrives */
+    .work img.lod {
+      filter: brightness(0.96) blur(12px);
+      transform: scale(1.04);
+    }
+
+    /* Touch devices: captions always visible */
+    @media (hover: none) {
+      .work figcaption {
         opacity: 1;
-        transform: translateY(0);
-        backdrop-filter: blur(10px);
+        transform: none;
       }
     }
 
+    /* Scroll reveal */
+    .work.reveal {
+      opacity: 0;
+      transform: translateY(26px);
+    }
+
+    .work.reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+      transition:
+        opacity 0.9s ease var(--delay, 0s),
+        transform 0.9s var(--ease-out) var(--delay, 0s);
+    }
+
+    @media (max-width: 640px) {
+      .row { flex-direction: column; }
+    }
+
+    /* ---------- CONTACT ---------- */
+
+    .contact {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: clamp(6rem, 13vw, 11rem) var(--pad-x);
+      text-align: center;
+    }
+
+    .contact h2 {
+      width: fit-content;
+      margin: 0 auto 1.6rem;
+      font-size: clamp(2rem, 4.5vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      background: linear-gradient(90deg, var(--fg) 0%, #6f9ff0 55%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .contact .email {
+      display: inline-block;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 500;
+      color: var(--fg);
+      padding-bottom: 0.3rem;
+      background: linear-gradient(var(--accent), var(--accent)) no-repeat 0 100% / 0% 1.5px;
+      transition: background-size 0.5s var(--ease-out), color 0.3s ease;
+    }
+
+    .contact .email:hover {
+      background-size: 100% 1.5px;
+      color: var(--accent);
+    }
+
+    /* ---------- FOOTER ---------- */
+
+    footer {
+      border-top: 1px solid var(--hairline);
+      padding: 2.2rem var(--pad-x);
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ---------- LIGHTBOX ---------- */
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(9, 9, 11, 0.9);
+      -webkit-backdrop-filter: blur(22px);
+      backdrop-filter: blur(22px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+
+    .lightbox.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-media {
+      max-width: min(92vw, 1600px);
+      max-height: 78vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-media img,
+    .lightbox-media video {
+      max-width: 100%;
+      max-height: 78vh;
+      border-radius: 10px;
+      box-shadow: 0 40px 120px -30px rgba(0, 0, 0, 0.9);
+      transform: scale(0.985);
+      opacity: 0;
+      transition: transform 0.4s var(--ease-out), opacity 0.4s ease;
+    }
+
+    .lightbox.active .lightbox-media img,
+    .lightbox.active .lightbox-media video {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .lightbox-caption {
+      margin-top: 1.3rem;
+      text-align: center;
+      padding: 0 1rem;
+    }
+
+    .lightbox-caption h3 {
+      margin: 0 0 0.2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .lightbox-caption p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .lightbox button {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--hairline);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--fg);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.3s ease, border-color 0.3s ease, transform 0.4s var(--ease-out);
+    }
+
+    .lightbox button:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .lightbox-close { top: 1.4rem; right: 1.4rem; }
+    .lightbox-close:hover { transform: rotate(90deg); }
+    .lightbox-prev { left: 1.2rem; top: 50%; transform: translateY(-50%); }
+    .lightbox-next { right: 1.2rem; top: 50%; transform: translateY(-50%); }
+
+    @media (max-width: 640px) {
+      .lightbox-prev, .lightbox-next { display: none; }
+    }
+
+    /* ---------- REDUCED MOTION ---------- */
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .work.reveal { opacity: 1; transform: none; }
+      .work img, .work video,
+      .work:hover img, .work:hover video { transition: none; transform: none; }
+      .scroll-cue::before { animation: none; }
+      .hero-content { transform: none !important; }
+    }
   </style>
+
   <script defer src="https://cloud.umami.is/script.js" data-website-id="80963a48-a5d4-4b51-ac9d-0c7ca2f67ddc"></script>
 </head>
 <body>
 
-  <header>
-    <h1>Jonathan Beesley's <br>Blender Renders</h1>
-    <p>A  selection of my 3D renders and animations created in Blender — modelling, shading, lighting, simulation, geometry nodes, and compositing.</p>
-    <br>
-    <p>Get in touch at: <a href="mailto:contact@jonathanbeesleyportfolio.com">contact@jonathanbeesleyportfolio.com</a></p>
+  <nav class="nav" id="nav">
+    <span class="brand">Jonathan Beesley</span>
+    <a class="contact-link" href="mailto:contact@jonathanbeesleyportfolio.com">Contact</a>
+  </nav>
+
+  <header class="hero">
+    <video src="videos/Title.mp4" poster="images/Title_mid.jpg"
+           autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+    <div class="hero-content" id="heroContent">
+      <span class="eyebrow">3D Artist · Blender</span>
+      <h1>Jonathan Beesley</h1>
+      <p class="tagline">Renders and animations built in Blender — modelling, shading, lighting, simulation, geometry nodes, and compositing.</p>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"></div>
   </header>
 
-  <main>
-    <section class="grid" id="gallery">
-
-      <div class="card">
-        <img src="images/Fancy Donut_lowres.png"
-             data-full="images/Fancy Donut.png"
-             data-title="Fancy Donuts"
-             data-desc="Modelling · Geometry Nodes"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Fancy Donuts</h3>
-          <p>Modelling · Geometry Nodes</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <img src="images/Title_lowres.png"
-             data-full="images/Title.png"
-             data-title="Title Image"
-             data-desc="Geometry Nodes · Shading"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Title Image</h3>
-          <p>Geometry Nodes · Shading</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <img src="images/Whole Car_lowres.png"
-             data-full="images/Whole Car.png"
-             data-title="Car Rendering"
-             data-desc="Modelling · Lighting"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Car Rendering</h3>
-          <p>Modelling · Lighting</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <video src="videos/Multiple Waveforms_lowres.mp4"
-               data-full="videos/Multiple Waveforms.mp4"
-               data-title="Multiple Waveforms"
-               data-desc="Modelling · Animation"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Multiple Waveforms</h3>
-          <p>Modelling · Animation</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <img src="images/Paint_lowres.png"
-             data-full="images/Paint.png"
-             data-title="Car Paint"
-             data-desc="Modelling · Shading"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Car Paint</h3>
-          <p>Modelling · Compositing</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <video src="videos/String_lowres.mp4"
-               data-full="videos/String.mp4"
-               data-title="String"
-               data-desc="Geometry Nodes · Animation"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>String</h3>
-          <p>Geometry Nodes · Animation</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <img src="images/Tires_lowres.png"
-             data-full="images/Tires.png"
-             data-title="Car Tyres"
-             data-desc="Modelling · Shading"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Car Tyres</h3>
-          <p>Modelling · Compositing</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <video src="videos/Sheet Music_lowres.mp4"
-               data-full="videos/Sheet Music.mp4"
-               data-title="Sheet Music"
-               data-desc="Animation · Rendering"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Sheet Music</h3>
-          <p>Animation · Rendering</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <img src="images/Purple_lowres.png"
-             data-full="images/Purple.png"
-             data-title="Block Magic"
-             data-desc="Geometry Nodes · Shading"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Block Magic</h3>
-          <p>Geometry Nodes · Shading</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <video src="videos/Blue Blocks_lowres.mp4"
-               data-full="videos/Blue Blocks.mp4"
-               data-title="Blue Blocks"
-               data-desc="Geometry Nodes · Shading"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Blue Blocks</h3>
-          <p>Geometry Nodes · Shading</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <video src="videos/Hexagon Stack_lowres.mp4"
-               data-full="videos/Hexagon Stack.mp4"
-               data-title="Hexagon Stacks"
-               data-desc="Geometry Nodes · Shading"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Hexagon Stacks</h3>
-          <p>Geometry Nodes · Shading</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <img src="images/Blocky Donuts_lowres.png"
-             data-full="images/Blocky Donuts.png"
-             data-title="Blocky Donuts"
-             data-desc="Modelling · Geometry Nodes"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Blocky Donuts</h3>
-          <p>Modelling · Geometry Nodes</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <img src="images/Modelling_lowres.png"
-             data-full="images/Modelling.png"
-             data-title="Dungeon"
-             data-desc="Modelling · Lighting"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Dungeon</h3>
-          <p>Modelling · Lighting</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <video src="videos/Fireball_lowres.mp4"
-               data-full="videos/Fireball.mp4"
-               data-title="Fireball Animation"
-               data-desc="Fluid Sim · Shading"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Fireball Animation</h3>
-          <p>Fluid Sim · Shading</p>
-        </div>
-      </div>
-      
-      <div class="card portrait">
-        <img src="images/Forest_lowres.png"
-             data-full="images/Forest.png"
-             data-title="Forest"
-             data-desc="Modelling · Lighting"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Forest</h3>
-          <p>Modelling · Lighting</p>
-        </div>
-      </div>
-      
-    <div class="card">
-        <video src="videos/Planet_lowres.mp4"
-               data-full="videos/Planet.mp4"
-               data-title="Planet"
-               data-desc="Geometry Nodes · Lighting"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Planet</h3>
-          <p>Geometry Nodes · Lighting</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <img src="images/Cloth_lowres.png"
-             data-full="images/Cloth.png"
-             data-title="Cloth"
-             data-desc="Simulation · Shading"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Cloth Simulation</h3>
-          <p>Simulation · Shading</p>
-        </div>
-      </div>
-      
-    <div class="card">
-        <video src="videos/Rigidbody1_lowres.mp4"
-               data-full="videos/Rigidbody1.mp4"
-               data-title="Rigidbody Sim"
-               data-desc="Simulation · Rendering"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Rigidbody Sim</h3>
-          <p>Simulation · Rendering</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <img src="images/fire_beauty_v01_lowres.png"
-             data-full="images/fire_beauty_v01.png"
-             data-title="Fire Simulation"
-             data-desc="Fluid Sim · Shading"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Fire Simulation</h3>
-          <p>Fluid Sim · Shading</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <video src="videos/Spider_lowres.mp4"
-               data-full="videos/Spider.mp4"
-               data-title="Spider"
-               data-desc="Modelling · Animation"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Spider</h3>
-          <p>Modelling · Animation</p>
-        </div>
-      </div>
-        
-      <div class="card">
-        <img src="images/cool_lyrics_lowres.png"
-             data-full="images/cool_lyrics.png"
-             data-title="Lyric Simulation"
-             data-desc="Simulation · Rendering"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Lyric Simulation</h3>
-          <p>Simulation · Rendering</p>
-        </div>
-      </div>
-      
-    <div class="card">
-        <video src="videos/Lyric Visualiser_lowres.mp4"
-               data-full="videos/Lyric Visualiser.mp4"
-               data-title="Lyric Simulation"
-               data-desc="Simulation · Rendering"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Lyric Simulation</h3>
-          <p>Simulation · Rendering</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <video src="videos/Motion Tracking_lowres.mp4"
-               data-full="videos/Motion Tracking.mp4"
-               data-title="Motion Tracking"
-               data-desc="VFX · Modelling"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Motion Tracking</h3>
-          <p>VFX · Modelling</p>
-        </div>
-      </div>
-      
-      <div class="card portrait">
-        <img src="images/Structure_lowres.png"
-             data-full="images/Structure.png"
-             data-title="Structure"
-             data-desc="Geometry Nodes · Lighting"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Structure</h3>
-          <p>Geometry Nodes · Lighting</p>
-        </div>
-      </div>
-      
-      <div class="card portrait">
-        <img src="images/Dark_lowres.png"
-             data-full="images/Dark.png"
-             data-title="Sign"
-             data-desc="Shading · Rendering"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Sign</h3>
-          <p>Shading · Rendering</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <img src="images/Original Donut_lowres.png"
-             data-full="images/Original Donut.png"
-             data-title="Original Donuts"
-             data-desc="Modelling · Geometry Nodes"
-             alt="Blender render"
-             loading="lazy"/>
-        <div class="info">
-          <h3>Original Donuts</h3>
-          <p>Modelling · Geometry Nodes</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <video src="videos/Sea_lowres.mp4"
-               data-full="videos/Sea.mp4"
-               data-title="Sea Blocks"
-               data-desc="Geometry Nodes · Shading"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Sea Blocks</h3>
-          <p>Geometry Nodes · Shading</p>
-        </div>
-      </div>
-      
-      <div class="card">
-        <video src="videos/TitleV2_lowres.mp4"
-               data-full="videos/TitleV2.mp4"
-               data-title="Title Animation"
-               data-desc="Geometry Nodes · Shading"
-               autoplay muted loop
-               ></video>
-        <div class="info">
-          <h3>Title Animation</h3>
-          <p>Geometry Nodes · Shading</p>
-        </div>
-      </div>
-
-    </section>
-  </main>
-    
-  <div class="lightbox" id="lightbox">
-    <button class="lightbox-close" aria-label="Close">✕</button>
-    <div class="lightbox-inner"></div>
+  <div class="section-intro">
+    <span class="eyebrow">Selected Work</span>
+    <h2>Stills &amp; Motion</h2>
   </div>
 
+  <main class="gallery" id="gallery">
+
+    <!-- Feature: ultrawide cinematic band -->
+    <div class="row">
+      <figure class="work" style="--ar: 2.3704" tabindex="0"
+              data-full="images/Whole Car.png" data-type="img"
+              data-title="Car Rendering" data-desc="Modelling · Lighting">
+        <img src="images/Whole Car_lowres.png" data-mid="images/Whole Car_mid.jpg" class="lod" width="2560" height="1080"
+             alt="Studio render of a full car model" loading="eager" decoding="async" />
+        <figcaption><h3>Car Rendering</h3><p>Modelling · Lighting</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Fireball.mp4" data-type="video"
+              data-title="Fireball Animation" data-desc="Fluid Sim · Shading">
+        <video src="videos/Fireball_lowres.mp4" data-mid="videos/Fireball_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Fireball Animation</h3><p>Fluid Sim · Shading</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Fancy Donut.png" data-type="img"
+              data-title="Fancy Donuts" data-desc="Modelling · Geometry Nodes">
+        <img src="images/Fancy Donut_lowres.png" data-mid="images/Fancy Donut_mid.jpg" class="lod" width="1600" height="900"
+             alt="Stylised donut render" loading="lazy" decoding="async" />
+        <figcaption><h3>Fancy Donuts</h3><p>Modelling · Geometry Nodes</p></figcaption>
+      </figure>
+    </div>
+
+    <!-- Tall showcase: portraits flanking motion -->
+    <div class="row">
+      <figure class="work" style="--ar: 0.7048" tabindex="0"
+              data-full="images/Forest.png" data-type="img"
+              data-title="Forest" data-desc="Modelling · Lighting">
+        <img src="images/Forest_lowres.png" data-mid="images/Forest_mid.jpg" class="lod" width="1480" height="2100"
+             alt="Atmospheric forest scene" loading="lazy" decoding="async" />
+        <figcaption><h3>Forest</h3><p>Modelling · Lighting</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Spider.mp4" data-type="video"
+              data-title="Spider" data-desc="Modelling · Animation">
+        <video src="videos/Spider_lowres.mp4" data-mid="videos/Spider_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Spider</h3><p>Modelling · Animation</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 0.8" tabindex="0"
+              data-full="images/Structure.png" data-type="img"
+              data-title="Structure" data-desc="Geometry Nodes · Lighting">
+        <img src="images/Structure_lowres.png" data-mid="images/Structure_mid.jpg" class="lod" width="1600" height="2000"
+             alt="Abstract architectural structure" loading="lazy" decoding="async" />
+        <figcaption><h3>Structure</h3><p>Geometry Nodes · Lighting</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Paint.png" data-type="img"
+              data-title="Car Paint" data-desc="Modelling · Compositing">
+        <img src="images/Paint_lowres.png" data-mid="images/Paint_mid.jpg" class="lod" width="1600" height="900"
+             alt="Car paint material study" loading="lazy" decoding="async" />
+        <figcaption><h3>Car Paint</h3><p>Modelling · Compositing</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Tires.png" data-type="img"
+              data-title="Car Tyres" data-desc="Modelling · Compositing">
+        <img src="images/Tires_lowres.png" data-mid="images/Tires_mid.jpg" class="lod" width="1600" height="900"
+             alt="Detailed car tyre render" loading="lazy" decoding="async" />
+        <figcaption><h3>Car Tyres</h3><p>Modelling · Compositing</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/String.mp4" data-type="video"
+              data-title="String" data-desc="Geometry Nodes · Animation">
+        <video src="videos/String_lowres.mp4" data-mid="videos/String_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>String</h3><p>Geometry Nodes · Animation</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Sheet Music.mp4" data-type="video"
+              data-title="Sheet Music" data-desc="Animation · Rendering">
+        <video src="videos/Sheet Music_lowres.mp4" data-mid="videos/Sheet Music_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Sheet Music</h3><p>Animation · Rendering</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/cool_lyrics.png" data-type="img"
+              data-title="Lyric Simulation" data-desc="Simulation · Rendering">
+        <img src="images/cool_lyrics_lowres.png" data-mid="images/cool_lyrics_mid.jpg" class="lod" width="1600" height="900"
+             alt="Typographic lyric simulation still" loading="lazy" decoding="async" />
+        <figcaption><h3>Lyric Simulation</h3><p>Simulation · Rendering</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Purple.png" data-type="img"
+              data-title="Block Magic" data-desc="Geometry Nodes · Shading">
+        <img src="images/Purple_lowres.png" data-mid="images/Purple_mid.jpg" class="lod" width="1600" height="900"
+             alt="Purple abstract block render" loading="lazy" decoding="async" />
+        <figcaption><h3>Block Magic</h3><p>Geometry Nodes · Shading</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Blue Blocks.mp4" data-type="video"
+              data-title="Blue Blocks" data-desc="Geometry Nodes · Shading">
+        <video src="videos/Blue Blocks_lowres.mp4" data-mid="videos/Blue Blocks_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Blue Blocks</h3><p>Geometry Nodes · Shading</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Hexagon Stack.mp4" data-type="video"
+              data-title="Hexagon Stacks" data-desc="Geometry Nodes · Shading">
+        <video src="videos/Hexagon Stack_lowres.mp4" data-mid="videos/Hexagon Stack_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Hexagon Stacks</h3><p>Geometry Nodes · Shading</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 0.8" tabindex="0"
+              data-full="images/Dark.png" data-type="img"
+              data-title="Sign" data-desc="Shading · Rendering">
+        <img src="images/Dark_lowres.png" data-mid="images/Dark_mid.jpg" class="lod" width="1600" height="2000"
+             alt="Moody neon sign render" loading="lazy" decoding="async" />
+        <figcaption><h3>Sign</h3><p>Shading · Rendering</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Planet.mp4" data-type="video"
+              data-title="Planet" data-desc="Geometry Nodes · Lighting">
+        <video src="videos/Planet_lowres.mp4" data-mid="videos/Planet_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Planet</h3><p>Geometry Nodes · Lighting</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Cloth.png" data-type="img"
+              data-title="Cloth Simulation" data-desc="Simulation · Shading">
+        <img src="images/Cloth_lowres.png" data-mid="images/Cloth_mid.jpg" class="lod" width="1600" height="900"
+             alt="Draped cloth simulation render" loading="lazy" decoding="async" />
+        <figcaption><h3>Cloth Simulation</h3><p>Simulation · Shading</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Modelling.png" data-type="img"
+              data-title="Dungeon" data-desc="Modelling · Lighting">
+        <img src="images/Modelling_lowres.png" data-mid="images/Modelling_mid.jpg" class="lod" width="1600" height="900"
+             alt="Dungeon environment render" loading="lazy" decoding="async" />
+        <figcaption><h3>Dungeon</h3><p>Modelling · Lighting</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/fire_beauty_v01.png" data-type="img"
+              data-title="Fire Simulation" data-desc="Fluid Sim · Shading">
+        <img src="images/fire_beauty_v01_lowres.png" data-mid="images/fire_beauty_v01_mid.jpg" class="lod" width="1600" height="900"
+             alt="Fire simulation beauty render" loading="lazy" decoding="async" />
+        <figcaption><h3>Fire Simulation</h3><p>Fluid Sim · Shading</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Rigidbody1.mp4" data-type="video"
+              data-title="Rigidbody Sim" data-desc="Simulation · Rendering">
+        <video src="videos/Rigidbody1_lowres.mp4" data-mid="videos/Rigidbody1_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Rigidbody Sim</h3><p>Simulation · Rendering</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Sea.mp4" data-type="video"
+              data-title="Sea Blocks" data-desc="Geometry Nodes · Shading">
+        <video src="videos/Sea_lowres.mp4" data-mid="videos/Sea_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Sea Blocks</h3><p>Geometry Nodes · Shading</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Title.png" data-type="img"
+              data-title="Title Image" data-desc="Geometry Nodes · Shading">
+        <img src="images/Title_lowres.png" data-mid="images/Title_mid.jpg" class="lod" width="1600" height="900"
+             alt="Title card render" loading="lazy" decoding="async" />
+        <figcaption><h3>Title Image</h3><p>Geometry Nodes · Shading</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Lyric Visualiser.mp4" data-type="video"
+              data-title="Lyric Visualiser" data-desc="Simulation · Rendering">
+        <video src="videos/Lyric Visualiser_lowres.mp4" data-mid="videos/Lyric Visualiser_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Lyric Visualiser</h3><p>Simulation · Rendering</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Motion Tracking.mp4" data-type="video"
+              data-title="Motion Tracking" data-desc="VFX · Modelling">
+        <video src="videos/Motion Tracking_lowres.mp4" data-mid="videos/Motion Tracking_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Motion Tracking</h3><p>VFX · Modelling</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Blocky Donuts.png" data-type="img"
+              data-title="Blocky Donuts" data-desc="Modelling · Geometry Nodes">
+        <img src="images/Blocky Donuts_lowres.png" data-mid="images/Blocky Donuts_mid.jpg" class="lod" width="1600" height="900"
+             alt="Voxel-style donut render" loading="lazy" decoding="async" />
+        <figcaption><h3>Blocky Donuts</h3><p>Modelling · Geometry Nodes</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Original Donut.png" data-type="img"
+              data-title="Original Donuts" data-desc="Modelling · Geometry Nodes">
+        <img src="images/Original Donut_lowres.png" data-mid="images/Original Donut_mid.jpg" class="lod" width="1600" height="900"
+             alt="Classic Blender donut render" loading="lazy" decoding="async" />
+        <figcaption><h3>Original Donuts</h3><p>Modelling · Geometry Nodes</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="images/Turquoise.png" data-type="img"
+              data-title="Turquoise" data-desc="Shading · Lighting">
+        <img src="images/Turquoise_lowres.png" data-mid="images/Turquoise_mid.jpg" class="lod" width="1600" height="900"
+             alt="Turquoise abstract render" loading="lazy" decoding="async" />
+        <figcaption><h3>Turquoise</h3><p>Shading · Lighting</p></figcaption>
+      </figure>
+    </div>
+
+    <div class="row">
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/TitleV2.mp4" data-type="video"
+              data-title="Title Animation" data-desc="Geometry Nodes · Shading">
+        <video src="videos/TitleV2_lowres.mp4" data-mid="videos/TitleV2_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Title Animation</h3><p>Geometry Nodes · Shading</p></figcaption>
+      </figure>
+      <figure class="work" style="--ar: 1.7778" tabindex="0"
+              data-full="videos/Multiple Waveforms.mp4" data-type="video"
+              data-title="Multiple Waveforms" data-desc="Modelling · Animation">
+        <video src="videos/Multiple Waveforms_lowres.mp4" data-mid="videos/Multiple Waveforms_mid.mp4" muted loop playsinline preload="metadata"></video>
+        <figcaption><h3>Multiple Waveforms</h3><p>Modelling · Animation</p></figcaption>
+      </figure>
+    </div>
+
+  </main>
+
+  <section class="contact">
+    <h2>Let&rsquo;s make something.</h2>
+    <a class="email" href="mailto:contact@jonathanbeesleyportfolio.com">contact@jonathanbeesleyportfolio.com</a>
+  </section>
+
+  <footer>
+    <span>&copy; 2026 Jonathan Beesley</span>
+    <span>Built with Blender</span>
+  </footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Media viewer">
+    <div class="lightbox-media" id="lightboxMedia"></div>
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+    <button class="lightbox-close" aria-label="Close">&#10005;</button>
+    <button class="lightbox-prev" aria-label="Previous">&#8592;</button>
+    <button class="lightbox-next" aria-label="Next">&#8594;</button>
+  </div>
 
   <script>
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ----- Nav: translucent blur once scrolled past the hero top ----- */
+    const nav = document.getElementById('nav');
+    let navTicking = false;
+    function updateNav() {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+      navTicking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!navTicking) { requestAnimationFrame(updateNav); navTicking = true; }
+    }, { passive: true });
+    updateNav();
+
+    /* ----- Hero parallax ----- */
+    const heroContent = document.getElementById('heroContent');
+    if (!reducedMotion) {
+      let heroTicking = false;
+      window.addEventListener('scroll', () => {
+        if (heroTicking) return;
+        heroTicking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          if (y < window.innerHeight) {
+            heroContent.style.transform = `translateY(${y * 0.28}px)`;
+            heroContent.style.opacity = Math.max(0, 1 - y / (window.innerHeight * 0.7));
+          }
+          heroTicking = false;
+        });
+      }, { passive: true });
+    }
+
+    /* ----- Scroll reveal with per-row stagger ----- */
+    const works = Array.from(document.querySelectorAll('.work'));
+    if (!reducedMotion && 'IntersectionObserver' in window) {
+      works.forEach(w => {
+        w.classList.add('reveal');
+        const idx = Array.from(w.parentElement.children).indexOf(w);
+        w.style.setProperty('--delay', `${idx * 0.1}s`);
+      });
+      const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -4% 0px' });
+      works.forEach(w => revealObserver.observe(w));
+    }
+
+    /* ----- Play gallery videos only while on screen ----- */
+    const galleryVideos = document.querySelectorAll('#gallery video');
+    if ('IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const v = entry.target;
+          if (entry.isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        });
+      }, { threshold: 0.3 });
+      galleryVideos.forEach(v => videoObserver.observe(v));
+    } else {
+      galleryVideos.forEach(v => v.play().catch(() => {}));
+    }
+
+    /* ----- LoD: upgrade media from low-res to mid-res as it nears the viewport ----- */
+    const lodMedia = Array.from(document.querySelectorAll('#gallery [data-mid]'));
+    const LOD_CONCURRENCY = 2;
+    const lodQueue = [];
+    let lodActive = 0;
+
+    function lodPump() {
+      while (lodActive < LOD_CONCURRENCY && lodQueue.length) {
+        const el = lodQueue.shift();
+        lodActive++;
+        lodUpgrade(el)
+          .catch(() => {})
+          .finally(() => { lodActive--; lodPump(); });
+      }
+    }
+
+    function lodUpgrade(el) {
+      const mid = el.dataset.mid;
+      if (el.tagName === 'IMG') {
+        return new Promise((resolve, reject) => {
+          const pre = new Image();
+          pre.onload = () => { el.src = mid; el.classList.remove('lod'); resolve(); };
+          pre.onerror = reject;
+          pre.src = mid;
+        });
+      }
+      // Video: buffer via a hidden preloader element (works on file:// where fetch is
+      // CORS-blocked), then swap the src and resume playback position.
+      return new Promise((resolve, reject) => {
+        const pre = document.createElement('video');
+        pre.muted = true;
+        pre.preload = 'auto';
+        pre.oncanplaythrough = () => {
+          pre.oncanplaythrough = null;
+          const t = el.currentTime;
+          const wasPlaying = !el.paused;
+          el.src = mid;
+          el.addEventListener('loadedmetadata', () => { el.currentTime = t; }, { once: true });
+          if (wasPlaying) el.play().catch(() => {});
+          pre.removeAttribute('src');
+          pre.load();
+          resolve();
+        };
+        pre.onerror = reject;
+        pre.src = mid;
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      const lodObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          lodObserver.unobserve(entry.target);
+          lodQueue.push(entry.target);
+          lodPump();
+        });
+      }, { rootMargin: '400px 0px' });
+      lodMedia.forEach(el => lodObserver.observe(el));
+    } else {
+      lodQueue.push(...lodMedia);
+      lodPump();
+    }
+
+    /* ----- Lightbox ----- */
     const lightbox = document.getElementById('lightbox');
-    const lightboxInner = document.querySelector('.lightbox-inner');
-    const closeBtn = document.querySelector('.lightbox-close');
+    const lightboxMedia = document.getElementById('lightboxMedia');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    let currentIndex = -1;
 
-    document.querySelectorAll('#gallery img, #gallery video').forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
+    function openLightbox(index) {
+      currentIndex = (index + works.length) % works.length;
+      const item = works[currentIndex];
+      lightboxMedia.innerHTML = '';
 
-        lightboxInner.innerHTML = '';
+      let media;
+      if (item.dataset.type === 'video') {
+        media = document.createElement('video');
+        media.src = item.dataset.full;
+        media.controls = true;
+        media.autoplay = true;
+        media.loop = true;
+        media.muted = true;
+        media.playsInline = true;
+      } else {
+        media = document.createElement('img');
+        media.src = item.dataset.full;
+        media.alt = item.dataset.title;
+      }
+      lightboxMedia.appendChild(media);
 
-        const wrapper = document.createElement('div');
-        wrapper.className = 'lightbox-content';
+      lightboxCaption.innerHTML = '';
+      const h3 = document.createElement('h3');
+      h3.textContent = item.dataset.title;
+      const p = document.createElement('p');
+      p.textContent = item.dataset.desc;
+      lightboxCaption.append(h3, p);
 
-        let media;
-        if (el.tagName === 'VIDEO') {
-          media = document.createElement('video');
-          media.src = el.dataset.full || el.src;
-          media.controls = true;
-          media.autoplay = true;
-          media.loop = true;
-          media.muted = true;
-          media.playsInline = true;
-        } else {
-          media = document.createElement('img');
-          media.src = el.dataset.full || el.src;
-          media.alt = el.alt || '';
-        }
+      lightbox.classList.add('active');
+      document.documentElement.classList.add('lightbox-open');
+    }
 
-        const info = document.createElement('div');
-        info.className = 'lightbox-info';
-        info.innerHTML = `
-          <h3>${el.dataset.title || ''}</h3>
-          <p>${el.dataset.desc || ''}</p>
-        `;
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      document.documentElement.classList.remove('lightbox-open');
+      lightboxMedia.innerHTML = '';
+      currentIndex = -1;
+    }
 
-        wrapper.appendChild(media);
-        wrapper.appendChild(info);
-        lightboxInner.appendChild(wrapper);
-
-        lightbox.classList.add('active');
+    works.forEach((item, i) => {
+      item.addEventListener('click', () => openLightbox(i));
+      item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); }
       });
     });
 
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      lightbox.classList.remove('active');
-      lightboxInner.innerHTML = '';
+    document.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+    document.querySelector('.lightbox-prev').addEventListener('click', e => {
+      e.stopPropagation(); openLightbox(currentIndex - 1);
+    });
+    document.querySelector('.lightbox-next').addEventListener('click', e => {
+      e.stopPropagation(); openLightbox(currentIndex + 1);
     });
 
-</script>
+    lightbox.addEventListener('click', e => {
+      if (e.target === lightbox || e.target === lightboxMedia) closeLightbox();
+    });
 
-
-    
-  <footer>
-    © 2024 · Built with Blender
-  </footer>
-
+    document.addEventListener('keydown', e => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      else if (e.key === 'ArrowLeft') openLightbox(currentIndex - 1);
+      else if (e.key === 'ArrowRight') openLightbox(currentIndex + 1);
+    });
+  </script>
 
 </body>
 </html>
